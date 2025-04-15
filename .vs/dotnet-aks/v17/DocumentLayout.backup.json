@@ -1,0 +1,68 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Samriddh\\source\\repos\\dotnet-aks\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{396034FB-A0A5-4DE0-ADA6-0DC8B9FB16B8}|dotnet-aks\\dotnet-aks.csproj|c:\\users\\samriddh\\source\\repos\\dotnet-aks\\dotnet-aks\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{396034FB-A0A5-4DE0-ADA6-0DC8B9FB16B8}|dotnet-aks\\dotnet-aks.csproj|solutionrelative:dotnet-aks\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{396034FB-A0A5-4DE0-ADA6-0DC8B9FB16B8}|dotnet-aks\\dotnet-aks.csproj|c:\\users\\samriddh\\source\\repos\\dotnet-aks\\dotnet-aks\\dotnet-aks.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{396034FB-A0A5-4DE0-ADA6-0DC8B9FB16B8}|dotnet-aks\\dotnet-aks.csproj|solutionrelative:dotnet-aks\\dotnet-aks.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 325,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "dotnet-aks.http",
+              "DocumentMoniker": "C:\\Users\\Samriddh\\source\\repos\\dotnet-aks\\dotnet-aks\\dotnet-aks.http",
+              "RelativeDocumentMoniker": "dotnet-aks\\dotnet-aks.http",
+              "ToolTip": "C:\\Users\\Samriddh\\source\\repos\\dotnet-aks\\dotnet-aks\\dotnet-aks.http",
+              "RelativeToolTip": "dotnet-aks\\dotnet-aks.http",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2025-04-15T06:05:31.284Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Dockerfile",
+              "DocumentMoniker": "C:\\Users\\Samriddh\\source\\repos\\dotnet-aks\\dotnet-aks\\Dockerfile",
+              "RelativeDocumentMoniker": "dotnet-aks\\Dockerfile",
+              "ToolTip": "C:\\Users\\Samriddh\\source\\repos\\dotnet-aks\\dotnet-aks\\Dockerfile",
+              "RelativeToolTip": "dotnet-aks\\Dockerfile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-04-15T06:00:09.413Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 75,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

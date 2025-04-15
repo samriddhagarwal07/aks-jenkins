@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "sRMXcTvYY8JlhSmRssSDEd758GkcqDWmzo04dD1RptQ=",
+  "Source": "dotnet-aks",
+  "BasePath": "_content/dotnet-aks",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
