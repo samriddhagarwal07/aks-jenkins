@@ -9,8 +9,8 @@ pipeline {
         IMAGE_TAG = 'latest'
         RESOURCE_GROUP = 'myResourceGroup'
         AKS_CLUSTER = 'myAKSCluster'
-        TF_WORKING_DIR = '.'
-        PATH = "$PATH;C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386" // Adjust Terraform path
+        TF_WORKING_DIR = 'terraform'
+        PATH = "$PATH;C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386"
     }
 
     stages {
@@ -36,12 +36,19 @@ pipeline {
             }
         }
 
+        stage('Check Terraform Files') {
+            steps {
+                bat """
+                echo "Checking for Terraform files in %TF_WORKING_DIR%"
+                cd %TF_WORKING_DIR%
+                dir *.tf
+                """
+            }
+        }
+
         stage('Install Terraform') {
             steps {
-                script {
-                    echo "Assuming Terraform is pre-installed and available in PATH"
-                    bat "terraform -version"
-                }
+                bat "terraform -version"
             }
         }
 
@@ -49,9 +56,7 @@ pipeline {
             steps {
                 withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
                     bat """
-                    echo "Navigating to Terraform Directory: %TF_WORKING_DIR%"
                     cd %TF_WORKING_DIR%
-                    echo "Initializing Terraform..."
                     terraform init
                     """
                 }
@@ -63,7 +68,6 @@ pipeline {
                 withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
                     bat """
                     cd %TF_WORKING_DIR%
-                    echo "Running Terraform Plan..."
                     terraform plan -out=tfplan
                     """
                 }
@@ -75,7 +79,6 @@ pipeline {
                 withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
                     bat """
                     cd %TF_WORKING_DIR%
-                    echo "Applying Terraform Plan..."
                     terraform apply -auto-approve tfplan
                     """
                 }
