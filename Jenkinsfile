@@ -16,7 +16,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/samriddhagarwal07/aks-jenkins.git'
+                git branch: 'main', url: 'https://github.com/samriddhagarwal07/aks-jenkins.git'
             }
         }
 
@@ -25,14 +25,14 @@ pipeline {
                 bat """
                 echo "Checking .NET SDK version"
                 dotnet --version
-                dotnet publish dotnet-aks.csproj -c Release --framework net8.0
+                dotnet publish donet-aks/dotnet-aks.csproj -c Release --framework net8.0
                 """
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} -f Dockerfile ."
+                bat "docker build -t ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} -f donet-aks/Dockerfile ."
             }
         }
 
