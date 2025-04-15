@@ -25,7 +25,7 @@ pipeline {
                 bat """
                 echo "Checking .NET SDK version"
                 dotnet --version
-                dotnet publish donet-aks/dotnet-aks.csproj -c Release --framework net8.0
+                dotnet publish dotnet-aks/dotnet-aks.csproj -c Release --framework net8.0
                 """
             }
         }
