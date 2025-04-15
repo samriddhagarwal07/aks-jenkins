@@ -34,7 +34,8 @@
               "RelativeToolTip": "dotnet-aks\\dotnet-aks.http",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2025-04-15T06:05:31.284Z"
+              "WhenOpened": "2025-04-15T06:05:31.284Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -44,7 +45,7 @@
               "RelativeDocumentMoniker": "dotnet-aks\\Dockerfile",
               "ToolTip": "C:\\Users\\Samriddh\\source\\repos\\dotnet-aks\\dotnet-aks\\Dockerfile",
               "RelativeToolTip": "dotnet-aks\\Dockerfile",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2025-04-15T06:00:09.413Z",
               "EditorCaption": ""

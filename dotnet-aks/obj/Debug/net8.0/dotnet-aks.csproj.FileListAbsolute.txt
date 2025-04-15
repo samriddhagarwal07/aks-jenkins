@@ -34,3 +34,4 @@ C:\Users\Samriddh\source\repos\dotnet-aks\dotnet-aks\obj\Debug\net8.0\refint\dot
 C:\Users\Samriddh\source\repos\dotnet-aks\dotnet-aks\obj\Debug\net8.0\dotnet-aks.pdb
 C:\Users\Samriddh\source\repos\dotnet-aks\dotnet-aks\obj\Debug\net8.0\dotnet-aks.genruntimeconfig.cache
 C:\Users\Samriddh\source\repos\dotnet-aks\dotnet-aks\obj\Debug\net8.0\ref\dotnet-aks.dll
+C:\Users\Samriddh\source\repos\dotnet-aks\dotnet-aks\obj\Debug\net8.0\dotnet-aks.sourcelink.json

@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("dotnet-aks")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c6ec9e5b958b3da3c7d1f997614e97d85e995874")]
 [assembly: System.Reflection.AssemblyProductAttribute("dotnet-aks")]
 [assembly: System.Reflection.AssemblyTitleAttribute("dotnet-aks")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

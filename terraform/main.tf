@@ -1,16 +1,15 @@
-provider "azurerm" {
+ provider "azurerm" {
   features {}
   subscription_id = "4a6f3be4-14cd-451b-97b0-d315131d91cd"
-
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "myResourceGroup"
-  location = "East US"
+  name     = var.resource_group_name
+  location = var.location
 }
 
 resource "azurerm_container_registry" "acr" {
-  name                = "myacrname123"
+  name                = var.acr_name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = "Basic"
@@ -18,10 +17,10 @@ resource "azurerm_container_registry" "acr" {
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "myAKSCluster"
+  name                = var.aks_name
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  dns_prefix          = "myaks"
+  dns_prefix          = "dns-${var.aks_name}"
 
   default_node_pool {
     name       = "default"
@@ -32,4 +31,15 @@ resource "azurerm_kubernetes_cluster" "aks" {
   identity {
     type = "SystemAssigned"
   }
+
+  tags = {
+    environment = "dev"
+  }
+}
+
+resource "azurerm_role_assignment" "acr_pull" {
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
+  role_definition_name            = "AcrPull"
+  scope                           = azurerm_container_registry.acr.id
+  skip_service_principal_aad_check = true
 }
