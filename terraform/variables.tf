@@ -1,15 +1,23 @@
 variable "location" {
-  default = "East US"
+  description = "Azure region where resources will be deployed"
+  type        = string
+  default     = "East US"
 }
 
 variable "resource_group_name" {
-  default = "myResourceGroup"
+  description = "Name of the Azure Resource Group"
+  type        = string
+  default     = "myResourceGroup"
 }
 
 variable "acr_name" {
-  default = "myacrsam"  # must be globally unique and lowercase
+  description = "Name of the Azure Container Registry (must be globally unique and lowercase)"
+  type        = string
+  default     = "myacrsam"
 }
 
 variable "aks_name" {
-  default = "myAKSCluster"
+  description = "Name of the Azure Kubernetes Service cluster"
+  type        = string
+  default     = "myAKSCluster"
 }
