@@ -85,10 +85,10 @@ pipeline {
                 )]) {
                     bat """
                     cd %TF_WORKING_DIR%
-                    set ARM_CLIENT_ID=%AZURE_CLIENT_ID%
-                    set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%
-                    set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%
-                    set ARM_TENANT_ID=%AZURE_TENANT_ID%
+                    set ARM_CLIENT_ID=%AZURE_CLIENT_ID%&& ^
+                    set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%&& ^
+                    set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%&& ^
+                    set ARM_TENANT_ID=%AZURE_TENANT_ID%&& ^
                     terraform apply -auto-approve tfplan
                     """
                 }
