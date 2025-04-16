@@ -9,9 +9,7 @@ pipeline {
         IMAGE_TAG = 'latest'
         RESOURCE_GROUP = 'myResourceGroup'
         AKS_CLUSTER = 'myAKSCluster'
-        TF_WORKING_DIR = 'terraform'
-        TF_PATH = 'C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386\\terraform.exe'
-        PATH = "$PATH;C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386"
+        TF_PATH = '"C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386\\terraform.exe"'
     }
 
     stages {
@@ -80,16 +78,10 @@ pipeline {
         // }
 
         stage('Terraform Init') {
-            steps {
-                withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
-                    bat """
-                    cd %TF_WORKING_DIR%
-                    %TF_PATH% init
-                    """
-                }
-            }
-        }
-
+           steps {
+                bat '"%TERRAFORM_PATH%" -chdir=terraform init '
+          }
+    }
         stage('Terraform Plan & Apply') {
            steps {
                
