@@ -21,13 +21,30 @@ pipeline {
             }
         }
 
-        stage('Build .NET App') {
+        // stage('Build .NET App') {
+        //     steps {
+        //         bat """
+        //         echo Checking .NET SDK version
+        //         dotnet --version
+        //         dotnet publish dotnet-aks/dotnet-aks.csproj -c Release --framework net8.0
+        //         """
+        //     }
+        // }
+
+        stage('Azure Login') {
             steps {
-                bat """
-                echo Checking .NET SDK version
-                dotnet --version
-                dotnet publish dotnet-aks/dotnet-aks.csproj -c Release --framework net8.0
-                """
+                withCredentials([azureServicePrincipal(
+                    credentialsId: "${AZURE_CREDENTIALS_ID}",
+                    subscriptionIdVariable: 'AZ_SUBSCRIPTION_ID',
+                    clientIdVariable: 'AZ_CLIENT_ID',
+                    clientSecretVariable: 'AZ_CLIENT_SECRET',
+                    tenantIdVariable: 'AZ_TENANT_ID'
+                )]) {
+                    bat '''
+                        az login --service-principal -u %AZ_CLIENT_ID% -p %AZ_CLIENT_SECRET% --tenant %AZ_TENANT_ID%
+                        az account set --subscription %AZ_SUBSCRIPTION_ID%
+                    '''
+                }
             }
         }
 
