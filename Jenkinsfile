@@ -74,16 +74,22 @@ pipeline {
             }
         }
 
-        stage('Terraform Apply') {
-            steps {
-                withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
-                    bat """
-                    cd %TF_WORKING_DIR%
-                    terraform apply -auto-approve tfplan
-                    """
-                }
-            }
+       stage('Terraform Apply') {
+    steps {
+        withCredentials([
+            string(credentialsId: 'AZURE_SUBSCRIPTION_ID', variable: 'AZURE_SUBSCRIPTION_ID'),
+            string(credentialsId: 'AZURE_TENANT_ID', variable: 'AZURE_TENANT_ID'),
+            string(credentialsId: 'AZURE_CLIENT_ID', variable: 'AZURE_CLIENT_ID'),
+            string(credentialsId: 'AZURE_CLIENT_SECRET', variable: 'AZURE_CLIENT_SECRET')
+        ]) {
+            bat '''
+                cd terraform
+                terraform apply -auto-approve tfplan
+            '''
         }
+    }
+}
+
 
         stage('Login to ACR') {
             steps {
