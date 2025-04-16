@@ -75,20 +75,21 @@ pipeline {
         }
 
        stage('Terraform Apply') {
-    steps {
-        withCredentials([
-            string(credentialsId: 'AZURE_SUBSCRIPTION_ID', variable: 'AZURE_SUBSCRIPTION_ID'),
-            string(credentialsId: 'AZURE_TENANT_ID', variable: 'AZURE_TENANT_ID'),
-            string(credentialsId: 'AZURE_CLIENT_ID', variable: 'AZURE_CLIENT_ID'),
-            string(credentialsId: 'AZURE_CLIENT_SECRET', variable: 'AZURE_CLIENT_SECRET')
-        ]) {
-            bat '''
-                cd terraform
-                terraform apply -auto-approve tfplan
-            '''
+            steps {
+                withCredentials([azureServicePrincipal(
+                    credentialsId: 'jenkins-pipeline-sp',
+                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
+                    clientIdVariable: 'AZURE_CLIENT_ID',
+                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
+                    tenantIdVariable: 'AZURE_TENANT_ID'
+                )]) {
+                    bat """
+                    cd %TF_WORKING_DIR%
+                    terraform apply -auto-approve tfplan
+                    """
+                }
+            }
         }
-    }
-}
 
 
         stage('Login to ACR') {
@@ -111,7 +112,7 @@ pipeline {
 
         stage('Deploy to AKS') {
             steps {
-                bat "kubectl apply -f dotnet-aks/deployment.yaml"
+                bat "kubectl apply -f deployment.yaml"
             }
         }
     }
