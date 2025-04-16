@@ -54,30 +54,30 @@ pipeline {
             }
         }
 
-        stage('Check Terraform Files') {
-            steps {
-                bat """
-                echo Checking for Terraform files in %TF_WORKING_DIR%
-                cd %TF_WORKING_DIR%
-                dir *.tf
-                """
-            }
-        }
+        // stage('Check Terraform Files') {
+        //     steps {
+        //         bat """
+        //         echo Checking for Terraform files in %TF_WORKING_DIR%
+        //         cd %TF_WORKING_DIR%
+        //         dir *.tf
+        //         """
+        //     }
+        // }
 
-        stage('Install Terraform') {
-            steps {
-                bat "%TF_PATH% -version"
-            }
-        }
+        // stage('Install Terraform') {
+        //     steps {
+        //         bat "%TF_PATH% -version"
+        //     }
+        // }
 
-        stage('Terraform Format') {
-            steps {
-                bat """
-                cd %TF_WORKING_DIR%
-                %TF_PATH% fmt
-                """
-            }
-        }
+        // stage('Terraform Format') {
+        //     steps {
+        //         bat """
+        //         cd %TF_WORKING_DIR%
+        //         %TF_PATH% fmt
+        //         """
+        //     }
+        // }
 
         stage('Terraform Init') {
             steps {
@@ -90,64 +90,13 @@ pipeline {
             }
         }
 
-        stage('Terraform Import Existing Resources') {
-            steps {
-                withCredentials([azureServicePrincipal(
-                    credentialsId: AZURE_CREDENTIALS_ID,
-                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
-                    clientIdVariable: 'AZURE_CLIENT_ID',
-                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
-                    tenantIdVariable: 'AZURE_TENANT_ID'
-                )]) {
-                    script {
-                        try {
-                            bat """
-                            cd %TF_WORKING_DIR%
-                            set ARM_CLIENT_ID=%AZURE_CLIENT_ID%
-                            set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%
-                            set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%
-                            set ARM_TENANT_ID=%AZURE_TENANT_ID%
-                            %TF_PATH% import azurerm_resource_group.rg /subscriptions/%AZURE_SUBSCRIPTION_ID%/resourceGroups/%RESOURCE_GROUP%
-                            """
-                        } catch (Exception e) {
-                            echo "Resource already managed by Terraform or other import issue, skipping import."
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Terraform Plan') {
-            steps {
-                withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
-                    bat """
-                    cd %TF_WORKING_DIR%
-                    %TF_PATH% plan -out=tfplan
-                    """
-                }
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                withCredentials([azureServicePrincipal(
-                    credentialsId: AZURE_CREDENTIALS_ID,
-                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
-                    clientIdVariable: 'AZURE_CLIENT_ID',
-                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
-                    tenantIdVariable: 'AZURE_TENANT_ID'
-                )]) {
-                    bat """
-                    cd %TF_WORKING_DIR%
-                    set ARM_CLIENT_ID=%AZURE_CLIENT_ID%
-                    set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%
-                    set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%
-                    set ARM_TENANT_ID=%AZURE_TENANT_ID%
-                    %TF_PATH% apply -auto-approve tfplan
-                    """
-                }
-            }
-        }
+        stage('Terraform Plan & Apply') {
+           steps {
+               
+               bat '"%TERRAFORM_PATH%" -chdir=terraform plan -out=tfplan'
+               bat '"%TERRAFORM_PATH%" -chdir=terraform apply -auto-approve tfplan'
+           }
+     }
 
         stage('Login to ACR') {
             steps {
