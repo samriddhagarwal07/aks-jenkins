@@ -9,7 +9,7 @@ pipeline {
         IMAGE_TAG = 'latest'
         RESOURCE_GROUP = 'myResourceGroup'
         AKS_CLUSTER = 'myAKSCluster'
-        TF_PATH = '"C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386\\terraform.exe"'
+        TERRAFORM_PATH = '"C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386\\terraform.exe"'
     }
 
     stages {
