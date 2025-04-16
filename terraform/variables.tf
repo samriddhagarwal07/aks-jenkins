@@ -1,23 +1,39 @@
+variable "subscription_id" {
+  description = "Subscription id of the account"
+  type = string
+  default = "4a6f3be4-14cd-451b-97b0-d315131d91cd"
+}
+
 variable "location" {
-  description = "Azure region where resources will be deployed"
-  type        = string
-  default     = "East US"
+    description = "location of service"
+    type = string
+    default = "eastus"
 }
 
 variable "resource_group_name" {
-  description = "Name of the Azure Resource Group"
-  type        = string
-  default     = "myResourceGroup"
+  description = "resource group name"
+  type = string
+  default = "myResourceGroup"
 }
 
 variable "acr_name" {
-  description = "Name of the Azure Container Registry (must be globally unique and lowercase)"
-  type        = string
-  default     = "myacrsam"
+  description = "Name of the service plan"
+  type = string
+  default = "myacrsam"
+}
+
+variable "os" {
+  description = "Operating system"
+  type = string
+  default = "Linux"
 }
 
 variable "aks_name" {
-  description = "Name of the Azure Kubernetes Service cluster"
-  type        = string
-  default     = "myAKSCluster"
+    description = "Name of the service plan"
+    type = string
+    default = "myAKSCluster"
+}
+
+variable "dns_prefix"{
+  default = "my-akscluster"
 }
