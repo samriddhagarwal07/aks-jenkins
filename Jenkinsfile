@@ -48,7 +48,7 @@ pipeline {
 
         stage('Install Terraform') {
             steps {
-                bat "terraform -version"
+                bat "C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386\\terraform.exe -version"
             }
         }
 
@@ -74,10 +74,10 @@ pipeline {
             }
         }
 
-       stage('Terraform Apply') {
+        stage('Terraform Apply') {
             steps {
                 withCredentials([azureServicePrincipal(
-                    credentialsId: 'jenkins-pipeline-sp',
+                    credentialsId: AZURE_CREDENTIALS_ID,
                     subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
                     clientIdVariable: 'AZURE_CLIENT_ID',
                     clientSecretVariable: 'AZURE_CLIENT_SECRET',
@@ -85,12 +85,15 @@ pipeline {
                 )]) {
                     bat """
                     cd %TF_WORKING_DIR%
+                    set ARM_CLIENT_ID=%AZURE_CLIENT_ID%
+                    set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%
+                    set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%
+                    set ARM_TENANT_ID=%AZURE_TENANT_ID%
                     terraform apply -auto-approve tfplan
                     """
                 }
             }
         }
-
 
         stage('Login to ACR') {
             steps {
