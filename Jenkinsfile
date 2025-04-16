@@ -143,3 +143,26 @@ pipeline {
                 bat "docker push %ACR_LOGIN_SERVER%/%IMAGE_NAME%:%IMAGE_TAG%"
             }
         }
+
+        stage('Get AKS Credentials') {
+            steps {
+                bat "az aks get-credentials --resource-group %RESOURCE_GROUP% --name %AKS_CLUSTER% --overwrite-existing"
+            }
+        }
+
+        stage('Deploy to AKS') {
+            steps {
+                bat "kubectl apply -f deployment.yaml"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ All stages completed successfully!'
+        }
+        failure {
+            echo '❌ Build failed.'
+        }
+    }
+}
