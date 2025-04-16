@@ -10,6 +10,7 @@ pipeline {
         RESOURCE_GROUP = 'myResourceGroup'
         AKS_CLUSTER = 'myAKSCluster'
         TF_WORKING_DIR = 'terraform'
+        TF_PATH = 'C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386\\terraform.exe'
         PATH = "$PATH;C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386"
     }
 
@@ -23,7 +24,7 @@ pipeline {
         stage('Build .NET App') {
             steps {
                 bat """
-                echo "Checking .NET SDK version"
+                echo Checking .NET SDK version
                 dotnet --version
                 dotnet publish dotnet-aks/dotnet-aks.csproj -c Release --framework net8.0
                 """
@@ -32,14 +33,14 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} -f dotnet-aks/Dockerfile ."
+                bat "docker build -t %ACR_LOGIN_SERVER%/%IMAGE_NAME%:%IMAGE_TAG% -f dotnet-aks/Dockerfile ."
             }
         }
 
         stage('Check Terraform Files') {
             steps {
                 bat """
-                echo "Checking for Terraform files in %TF_WORKING_DIR%"
+                echo Checking for Terraform files in %TF_WORKING_DIR%
                 cd %TF_WORKING_DIR%
                 dir *.tf
                 """
@@ -48,7 +49,16 @@ pipeline {
 
         stage('Install Terraform') {
             steps {
-                bat "C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386\\terraform.exe -version"
+                bat "%TF_PATH% -version"
+            }
+        }
+
+        stage('Terraform Format Check') {
+            steps {
+                bat """
+                cd %TF_WORKING_DIR%
+                %TF_PATH% fmt -check
+                """
             }
         }
 
@@ -57,7 +67,7 @@ pipeline {
                 withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
                     bat """
                     cd %TF_WORKING_DIR%
-                    terraform init
+                    %TF_PATH% init
                     """
                 }
             }
@@ -68,7 +78,7 @@ pipeline {
                 withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
                     bat """
                     cd %TF_WORKING_DIR%
-                    terraform plan -out=tfplan
+                    %TF_PATH% plan -out=tfplan
                     """
                 }
             }
@@ -85,11 +95,11 @@ pipeline {
                 )]) {
                     bat """
                     cd %TF_WORKING_DIR%
-                    set ARM_CLIENT_ID=%AZURE_CLIENT_ID%&& ^
-                    set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%&& ^
-                    set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%&& ^
-                    set ARM_TENANT_ID=%AZURE_TENANT_ID%&& ^
-                    terraform apply -auto-approve tfplan
+                    set ARM_CLIENT_ID=%AZURE_CLIENT_ID%
+                    set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%
+                    set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%
+                    set ARM_TENANT_ID=%AZURE_TENANT_ID%
+                    %TF_PATH% apply -auto-approve tfplan
                     """
                 }
             }
