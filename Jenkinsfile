@@ -2,93 +2,84 @@ pipeline {
     agent any
 
     environment {
-        ACR_NAME = 'myacrsam'
-        AZURE_CREDENTIALS_ID = 'jenkins-pipeline-sp'
-        ACR_LOGIN_SERVER = "${ACR_NAME}.azurecr.io"
-        IMAGE_NAME = 'mywebapi'
-        IMAGE_TAG = 'latest'
-        RESOURCE_GROUP = 'myResourceGroup'
-        AKS_CLUSTER = 'myAKSCluster'
-        TF_WORKING_DIR = 'terraform'
-        TF_PATH = 'C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386\\terraform.exe'
-        PATH = "$PATH;C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386"
+        TERRAFORM_PATH = 'C:\\Users\\Samriddh\\Downloads\\terraform_1.11.3_windows_386\\terraform.exe'
+        TF_VAR_client_id = credentials('AZURE_CLIENT_ID')
+        TF_VAR_client_secret = credentials('AZURE_CLIENT_SECRET')
+        TF_VAR_tenant_id = credentials('AZURE_TENANT_ID')
+        TF_VAR_subscription_id = credentials('AZURE_SUBSCRIPTION_ID')
+        ACR_NAME = "myacrsam"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/samriddhagarwal07/aks-jenkins.git'
+                git 'https://github.com/samriddhagarwal07/aks-jenkins.git'
             }
         }
 
         stage('Build .NET App') {
             steps {
-                bat """
-                echo Checking .NET SDK version
-                dotnet --version
-                dotnet publish dotnet-aks/dotnet-aks.csproj -c Release --framework net8.0
-                """
+                bat 'echo Checking .NET SDK version'
+                bat 'dotnet --version'
+                bat 'dotnet publish dotnet-aks/dotnet-aks.csproj -c Release --framework net8.0'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t %ACR_LOGIN_SERVER%/%IMAGE_NAME%:%IMAGE_TAG% -f dotnet-aks/Dockerfile ."
+                bat 'docker build -t myacrsam.azurecr.io/mywebapi:latest -f dotnet-aks/Dockerfile .'
             }
         }
 
         stage('Check Terraform Files') {
             steps {
-                bat """
-                echo Checking for Terraform files in %TF_WORKING_DIR%
-                cd %TF_WORKING_DIR%
-                dir *.tf
-                """
+                bat 'echo Checking for Terraform files in terraform'
+                bat 'cd terraform && dir *.tf'
             }
         }
 
         stage('Install Terraform') {
             steps {
-                bat "%TF_PATH% -version"
+                bat "${TERRAFORM_PATH} -version"
             }
         }
 
         stage('Terraform Format') {
             steps {
-                bat """
-                cd %TF_WORKING_DIR%
-                %TF_PATH% fmt
-                """
+                bat "cd terraform && ${TERRAFORM_PATH} fmt"
             }
         }
 
         stage('Terraform Init') {
             steps {
-                withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
-                    bat """
-                    cd %TF_WORKING_DIR%
-                    %TF_PATH% init
-                    """
+                withCredentials([
+                    string(credentialsId: 'AZURE_CLIENT_ID', variable: 'ARM_CLIENT_ID'),
+                    string(credentialsId: 'AZURE_CLIENT_SECRET', variable: 'ARM_CLIENT_SECRET'),
+                    string(credentialsId: 'AZURE_SUBSCRIPTION_ID', variable: 'ARM_SUBSCRIPTION_ID'),
+                    string(credentialsId: 'AZURE_TENANT_ID', variable: 'ARM_TENANT_ID')
+                ]) {
+                    bat "cd terraform && ${TERRAFORM_PATH} init"
                 }
             }
         }
 
         stage('Terraform Import Existing Resources') {
             steps {
-                withCredentials([azureServicePrincipal(
-                    credentialsId: AZURE_CREDENTIALS_ID,
-                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
-                    clientIdVariable: 'AZURE_CLIENT_ID',
-                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
-                    tenantIdVariable: 'AZURE_TENANT_ID'
-                )]) {
+                withCredentials([
+                    string(credentialsId: 'AZURE_CLIENT_ID', variable: 'ARM_CLIENT_ID'),
+                    string(credentialsId: 'AZURE_CLIENT_SECRET', variable: 'ARM_CLIENT_SECRET'),
+                    string(credentialsId: 'AZURE_SUBSCRIPTION_ID', variable: 'ARM_SUBSCRIPTION_ID'),
+                    string(credentialsId: 'AZURE_TENANT_ID', variable: 'ARM_TENANT_ID')
+                ]) {
                     bat """
-                    cd %TF_WORKING_DIR%
-                    set ARM_CLIENT_ID=%AZURE_CLIENT_ID%
-                    set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%
-                    set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%
-                    set ARM_TENANT_ID=%AZURE_TENANT_ID%
-                    %TF_PATH% import azurerm_resource_group.rg /subscriptions/%AZURE_SUBSCRIPTION_ID%/resourceGroups/%RESOURCE_GROUP%
+                        cd terraform
+                        ${TERRAFORM_PATH} state list | findstr azurerm_resource_group.rg > nul
+                        if %errorlevel% neq 0 (
+                            echo Importing resource group...
+                            ${TERRAFORM_PATH} import azurerm_resource_group.rg /subscriptions/%ARM_SUBSCRIPTION_ID%/resourceGroups/myResourceGroup
+                        ) else (
+                            echo Resource group already managed by Terraform. Skipping import.
+                        )
                     """
                 }
             }
@@ -96,67 +87,48 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
-                    bat """
-                    cd %TF_WORKING_DIR%
-                    %TF_PATH% plan -out=tfplan
-                    """
-                }
+                bat "cd terraform && ${TERRAFORM_PATH} plan"
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                withCredentials([azureServicePrincipal(
-                    credentialsId: AZURE_CREDENTIALS_ID,
-                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
-                    clientIdVariable: 'AZURE_CLIENT_ID',
-                    clientSecretVariable: 'AZURE_CLIENT_SECRET',
-                    tenantIdVariable: 'AZURE_TENANT_ID'
-                )]) {
-                    bat """
-                    cd %TF_WORKING_DIR%
-                    set ARM_CLIENT_ID=%AZURE_CLIENT_ID%
-                    set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%
-                    set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%
-                    set ARM_TENANT_ID=%AZURE_TENANT_ID%
-                    %TF_PATH% apply -auto-approve tfplan
-                    """
-                }
+                bat "cd terraform && ${TERRAFORM_PATH} apply -auto-approve"
             }
         }
 
         stage('Login to ACR') {
             steps {
-                bat "az acr login --name %ACR_NAME%"
+                bat "az acr login --name ${env.ACR_NAME}"
             }
         }
 
         stage('Push Docker Image to ACR') {
             steps {
-                bat "docker push %ACR_LOGIN_SERVER%/%IMAGE_NAME%:%IMAGE_TAG%"
+                bat "docker push ${env.ACR_NAME}.azurecr.io/mywebapi:latest"
             }
         }
 
         stage('Get AKS Credentials') {
             steps {
-                bat "az aks get-credentials --resource-group %RESOURCE_GROUP% --name %AKS_CLUSTER% --overwrite-existing"
+                bat 'az aks get-credentials --resource-group myResourceGroup --name myAKSCluster'
             }
         }
 
         stage('Deploy to AKS') {
             steps {
-                bat "kubectl apply -f deployment.yaml"
+                bat 'kubectl apply -f manifests/deployment.yaml'
+                bat 'kubectl apply -f manifests/service.yaml'
             }
         }
     }
 
     post {
-        success {
-            echo '✅ All stages completed successfully!'
-        }
         failure {
-            echo '❌ Build failed.'
+            echo "❌ Build failed."
+        }
+        success {
+            echo "✅ Build succeeded!"
         }
     }
 }
