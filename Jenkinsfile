@@ -39,7 +39,7 @@ pipeline {
                     tenantIdVariable: 'AZ_TENANT_ID'
                 )]) {
                     bat '''
-                       az account clear
+                      
                         az login --service-principal -u %AZ_CLIENT_ID% -p %AZ_CLIENT_SECRET% --tenant %AZ_TENANT_ID%
                         az account set --subscription %AZ_SUBSCRIPTION_ID%
                     '''
