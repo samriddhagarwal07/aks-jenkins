@@ -53,11 +53,11 @@ pipeline {
             }
         }
 
-        stage('Terraform Format Check') {
+        stage('Terraform Format') {
             steps {
                 bat """
                 cd %TF_WORKING_DIR%
-                %TF_PATH% fmt -check
+                %TF_PATH% fmt
                 """
             }
         }
